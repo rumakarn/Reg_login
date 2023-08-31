@@ -5,6 +5,8 @@ const app = express();
 const hbs = require("hbs");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const cookieParser=require("cookie-parser");
+
 
 require("./db/conn");
 const Register = require("./models/registers");
@@ -16,7 +18,9 @@ const template_path = path.join(__dirname, "../templates/views" );
 const partials_path = path.join(__dirname, "../templates/partials" );
 
 app.use(express.json());
+app.use(cookieParser())
 app.use(express.urlencoded({extended:false}));
+
 
 app.use(express.static(static_path));
 app.set("view engine", "hbs");
@@ -29,7 +33,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/register", (req, res) =>{
+    console.log(`My cookie:${req.cookies.jwt}`);
     res.render("register");
+})
+
+app.get("/secret", (req, res) =>{
+    res.render("secret");
 })
 
 app.get("/login", (req, res) =>{
@@ -61,6 +70,12 @@ app.post("/register", async (req, res) =>{
         const token = await registerEmployee.generateAuthToken();
         console.log("the token part" + token);
 
+        res.cookie("jwt",token,{
+            expires:new Date(Date.now()+30000),
+            httpOnly:true,
+      
+        })
+
         const registered = await registerEmployee.save();
         console.log("the page part" + registered);
 
@@ -91,6 +106,18 @@ app.post("/login", async(req, res) =>{
 
         const token = await useremail.generateAuthToken();
         console.log("the token part" + token);
+
+
+        //the res.cookie() function is used to set the cookie name to value.
+        //the value parameter maybe a string or an object converted into JSON.
+
+        // res.cookie(name,value,[options])
+
+        res.cookie("jwt",token,{
+            expires:new Date(Date.now()+60000),
+            httpOnly:true
+        })
+        console.log(cookie)
        
         if(isMatch){
             res.status(201).render("index");

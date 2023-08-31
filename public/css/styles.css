@@ -66,7 +66,7 @@
     border: none;
     border-radius: 1.5rem;
     padding: 2%;
-    background: #0062cc;
+    background: grey;
     color: #fff;
     font-weight: 600;
     width: 50%;
@@ -138,7 +138,7 @@
   #team-section {
     padding: 50px 0;
   
-    background: #5385c1;
+    background: #434445;
     color: #fff;
   }
   .team-top-header h1 {
